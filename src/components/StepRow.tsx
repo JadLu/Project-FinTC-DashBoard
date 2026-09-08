@@ -47,7 +47,7 @@ export default function StepRow({ step, actor, journeyType, onValidateSuccess, n
       {actionable && (
         <div className="step-actions">
           <DecisionPanel
-            step={{ id: step.id, case_id: step.case_id, owner_role: step.owner_role }}
+            step={{ id: step.id, case_id: step.case_id, owner_role: step.owner_role, step_name: step.step_name }}
             actor={actor}
             journeyType={journeyType}
             onSuccess={onValidateSuccess}

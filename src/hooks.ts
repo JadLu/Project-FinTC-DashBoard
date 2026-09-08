@@ -22,6 +22,22 @@ export const useEvents = () => useData<Event>('hr_events', demoEvents)
 export const usePeople = () => useData<Person>('personnes', demoPeople)
 export const useConflicts = () => useData<Conflict>('hr_conflicts', demoConflicts)
 
+function applyDemoFallback(
+  personId: number | undefined,
+  setCases: (cases: Case[]) => void,
+  setSteps: (steps: Step[]) => void,
+) {
+  const ownedSteps = demoSteps.filter(step => step.status === 'PENDING' && step.owner_person_id === personId)
+  const ownedCaseIds = new Set(ownedSteps.map(step => step.case_id))
+  setCases(demoCases.filter(item => ownedCaseIds.has(item.case_id)))
+  setSteps(ownedSteps)
+}
+
+/**
+ * "My Tasks" for any role: filters hr_steps by owner_person_id FIRST (the actor's own
+ * pending steps), then joins up to hr_cases + the stagiaire's personnes row so each case
+ * group can still show the subject's name — without pulling in steps owned by other roles.
+ */
 export function useManagerTasks(personId: number | undefined) {
   const [cases, setCases] = useState<Case[]>([])
   const [steps, setSteps] = useState<Step[]>([])
@@ -32,45 +48,41 @@ export function useManagerTasks(personId: number | undefined) {
     setLoading(true)
     try {
       const { data, error } = await supabase
-        .from('hr_cases')
+        .from('hr_steps')
         .select(`
-          *,
-          hr_steps!inner(id, step_name, due_date, status, decision, owner_role, owner_person_id, case_id)
+          id, step_name, due_date, status, decision, owner_role, owner_person_id, case_id,
+          hr_cases!inner(
+            *,
+            personnes!hr_cases_subject_person_id_fkey(id, person_ref, full_name, email)
+          )
         `)
-        .eq('hr_steps.owner_person_id', personId)
-        .eq('hr_steps.status', 'PENDING')
-        .order('due_date', { foreignTable: 'hr_steps' })
+        .eq('owner_person_id', personId)
+        .eq('status', 'PENDING')
+        .order('due_date')
 
       if (!error && data) {
-        // Flatten: each case can have multiple steps, we want both lists separate
-        const allCases = data as any[]
+        // Flatten: each row is one step owned by this actor, carrying its parent case.
+        const rows = data as any[]
         const allSteps: Step[] = []
         const uniqueCases: Map<string, Case> = new Map()
 
-        for (const caseRow of allCases) {
-          const caseKey = caseRow.case_id
-          if (!uniqueCases.has(caseKey)) {
-            const { hr_steps, ...caseData } = caseRow
-            uniqueCases.set(caseKey, caseData as Case)
-          }
+        for (const row of rows) {
+          const { hr_cases: caseRow, ...stepData } = row
+          allSteps.push(stepData as Step)
 
-          if (caseRow.hr_steps && Array.isArray(caseRow.hr_steps)) {
-            for (const step of caseRow.hr_steps) {
-              allSteps.push(step as Step)
-            }
+          if (caseRow && !uniqueCases.has(caseRow.case_id)) {
+            const { personnes, ...caseFields } = caseRow
+            uniqueCases.set(caseRow.case_id, { ...caseFields, subject: personnes } as Case)
           }
         }
 
         setCases(Array.from(uniqueCases.values()))
         setSteps(allSteps)
       } else {
-        // Fallback to demo data
-        setCases(demoCases)
-        setSteps(demoSteps.filter(s => s.status === 'PENDING'))
+        applyDemoFallback(personId, setCases, setSteps)
       }
     } catch {
-      setCases(demoCases)
-      setSteps(demoSteps.filter(s => s.status === 'PENDING'))
+      applyDemoFallback(personId, setCases, setSteps)
     }
     setLoading(false)
   }, [personId])

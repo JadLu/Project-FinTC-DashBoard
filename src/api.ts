@@ -22,6 +22,7 @@ export interface ValidatePayload {
   note?: string;
   decision?: string;                 // e.g. 'CONTINUE', 'EXTEND', 'DONE'
   details?: Record<string, unknown>; // role-specific structured data
+  encadrant_ref?: string;            // Matricule de l'encadrant (Fixer objectifs step only)
 }
 
 export interface ValidateResponse {
@@ -32,6 +33,7 @@ export interface ValidateResponse {
   decision?: string | null;          // echoed back by Fusion
   case_status?: string;
   actor?: string;
+  encadrant_assigned?: string | null; // set by Fusion when encadrant_ref was applied
 }
 
 export async function validateStep(payload: ValidatePayload): Promise<ValidateResponse> {
@@ -79,12 +81,9 @@ export interface CreateCasePayload {
   person_ref: string;         // Matricule
   full_name: string;          // Nom complet
   email: string;
-  slack_id?: string;          // Slack ID (optional)
   journey_type: 'probation' | 'renewal' | 'offboarding';
   start_date: string;         // YYYY-MM-DD
   contract_end_date?: string; // YYYY-MM-DD (optional)
-  manager_ref: string;        // Matricule du manager
-  encadrant_ref?: string;     // Matricule de l'encadrant (optional)
 }
 
 export interface CreateCaseResponse {

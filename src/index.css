@@ -43,6 +43,10 @@
 .task-panel .decision-panel{margin-top:0}
 @media (max-width:720px){.task-panel{padding:0 15px 15px}.task-item.nested .task-row{padding-left:15px;grid-template-columns:1fr auto}.task-item.nested{margin-left:0;padding:0}}
 
+.table-card.upcoming{margin-top:16px;opacity:.85;background:#fbfcfc}
+.table-card.upcoming .table-toolbar strong{color:#5b6b6a}
+.count-pill.muted-pill{color:#6d8381;background:#eef2f1}
+
 .timeline-decision{margin:4px 0 2px}
 .timeline-toggle{border:0;background:transparent;color:#4c8671;font:600 11px 'DM Sans';cursor:pointer;padding:4px 0 0}
 

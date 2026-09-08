@@ -1,6 +1,5 @@
 // src/components/DetailsFields.tsx
 import { useState } from 'react'
-import { usePeople } from '../hooks'
 
 type Details = Record<string, unknown>
 
@@ -25,8 +24,6 @@ const splitCsv = (raw: string) => raw.split(',').map(s => s.trim()).filter(Boole
 export default function DetailsFields({ ownerRole, journeyType, value, onChange }: DetailsFieldsProps) {
   // raw text for comma-separated fields so the user can type commas freely
   const [csvRaw, setCsvRaw] = useState<Record<string, string>>({})
-  const { data: people } = usePeople()
-  const encadrants = people.filter(person => person.role === 'encadrant')
 
   const set = (key: string, v: unknown) => {
     const next = { ...value }
@@ -77,15 +74,6 @@ export default function DetailsFields({ ownerRole, journeyType, value, onChange 
       </select>
     </div>
   )
-  const peopleSelect = (k: string, label: string, list: { person_ref: string; full_name: string }[]) => (
-    <div key={k}>
-      <label className={labelClass}>{label}</label>
-      <select className={fieldClass} value={str(value[k])} onChange={e => set(k, e.target.value)}>
-        <option value="">— Choisir —</option>
-        {list.map(p => <option key={p.person_ref} value={p.person_ref}>{p.full_name} ({p.person_ref})</option>)}
-      </select>
-    </div>
-  )
   const checkField = (k: string, label: string) => (
     <label key={k} className="flex items-center gap-2 text-[13px] text-[#253536]">
       <input type="checkbox" checked={value[k] === true} onChange={e => set(k, e.target.checked || undefined)} />
@@ -112,7 +100,6 @@ export default function DetailsFields({ ownerRole, journeyType, value, onChange 
         selectField('performance_rating', 'Note de performance', ['1', '2', '3', '4', '5']),
         textField('objectives_met', 'Objectifs atteints (ex. 3/3)'),
         textField('proficiency', 'Niveau de maîtrise'),
-        peopleSelect('encadrant_ref', 'Encadrant à affecter', encadrants),
         areaField('feedback', 'Commentaire'),
       ]}
 

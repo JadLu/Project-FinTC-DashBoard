@@ -10,10 +10,10 @@ export const demoPeople: Person[] = [
   { id: 5, person_ref: 'ENC-003', full_name: 'Marc Petit', email: 'marc@orbit.fr', role: 'encadrant' },
 ]
 export const demoCases: Case[] = [
-  { id: 1, case_id: 'CASE-PRO-STG-001', subject_person_id: 4, journey_type: 'probation', start_date: date(-72), contract_end_date: date(12), status: 'OPEN', risk_level: 'MEDIUM', created_at: date(-72), closed_at: null, subject: demoPeople[3] },
-  { id: 2, case_id: 'CASE-OFF-004', subject_person_id: 5, journey_type: 'offboarding', start_date: date(-430), contract_end_date: date(4), status: 'OPEN', risk_level: 'HIGH', created_at: date(-12), closed_at: null, subject: demoPeople[4] },
-  { id: 3, case_id: 'CASE-REN-002', subject_person_id: 1, journey_type: 'renewal', start_date: date(-330), contract_end_date: date(8), status: 'BLOCKED', risk_level: 'HIGH', created_at: date(-30), closed_at: null, subject: demoPeople[0] },
-  { id: 4, case_id: 'CASE-CLOSED-008', subject_person_id: 4, journey_type: 'probation', start_date: date(-180), contract_end_date: date(-5), status: 'CLOSED', risk_level: 'LOW', created_at: date(-180), closed_at: date(-10), subject: demoPeople[3] },
+  { id: 1, case_id: 'CASE-PRO-STG-001', subject_person_id: 4, journey_type: 'probation', start_date: date(-72), contract_end_date: date(12), status: 'OPEN', risk_level: 'MEDIUM', created_at: date(-72), closed_at: null, subject: demoPeople[3], encadrant_person_id: null },
+  { id: 2, case_id: 'CASE-OFF-004', subject_person_id: 5, journey_type: 'offboarding', start_date: date(-430), contract_end_date: date(4), status: 'OPEN', risk_level: 'HIGH', created_at: date(-12), closed_at: null, subject: demoPeople[4], encadrant_person_id: null },
+  { id: 3, case_id: 'CASE-REN-002', subject_person_id: 1, journey_type: 'renewal', start_date: date(-330), contract_end_date: date(8), status: 'BLOCKED', risk_level: 'HIGH', created_at: date(-30), closed_at: null, subject: demoPeople[0], encadrant_person_id: null },
+  { id: 4, case_id: 'CASE-CLOSED-008', subject_person_id: 4, journey_type: 'probation', start_date: date(-180), contract_end_date: date(-5), status: 'CLOSED', risk_level: 'LOW', created_at: date(-180), closed_at: date(-10), subject: demoPeople[3], encadrant_person_id: null },
 ]
 export const demoSteps: Step[] = [
   { id: 101, case_id: 'CASE-PRO-STG-001', step_name: 'Évaluation manager', owner_person_id: 1, owner_role: 'manager', due_date: date(2), status: 'PENDING', validated_at: null, reminders_sent: 1, escalated: false, parent_step_id: null, owner: demoPeople[0], decision: null, details: null },

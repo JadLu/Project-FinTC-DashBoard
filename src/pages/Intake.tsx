@@ -8,7 +8,7 @@ export default function Intake() {
         <div>
           <p className="eyebrow">Espace stagiaire</p>
           <h1>Créer un dossier</h1>
-          <p className="subtle">Formulaire d'intake — remplace le formulaire Tally.</p>
+          <p className="subtle">Formulaire d'intake — envoie directement le dossier à Fusion.</p>
         </div>
       </div>
       <div className="mx-auto max-w-[720px]">

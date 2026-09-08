@@ -14,12 +14,9 @@ const EMPTY = {
   person_ref: '',
   full_name: '',
   email: '',
-  slack_id: '',
   journey_type: 'probation' as CreateCasePayload['journey_type'],
   start_date: '',
   contract_end_date: '',
-  manager_ref: '',
-  encadrant_ref: '',
 }
 
 const fieldClass =
@@ -45,10 +42,7 @@ export default function CaseIntakeForm() {
       email: form.email.trim(),
       journey_type: form.journey_type,
       start_date: form.start_date,
-      manager_ref: form.manager_ref.trim(),
-      ...(form.slack_id.trim() ? { slack_id: form.slack_id.trim() } : {}),
       ...(form.contract_end_date ? { contract_end_date: form.contract_end_date } : {}),
-      ...(form.encadrant_ref.trim() ? { encadrant_ref: form.encadrant_ref.trim() } : {}),
     }
 
     const response = await submit(payload)
@@ -107,11 +101,6 @@ export default function CaseIntakeForm() {
         </div>
 
         <div>
-          <label className={labelClass} htmlFor="slack_id">Slack ID</label>
-          <input id="slack_id" className={fieldClass} value={form.slack_id} onChange={set('slack_id')} />
-        </div>
-
-        <div>
           <label className={labelClass} htmlFor="journey_type">Type de Parcours *</label>
           <select id="journey_type" className={fieldClass} value={form.journey_type} onChange={set('journey_type')} required>
             {JOURNEY_OPTIONS.map(option => (
@@ -121,24 +110,16 @@ export default function CaseIntakeForm() {
         </div>
 
         <div>
-          <label className={labelClass} htmlFor="manager_ref">Matricule du Manager *</label>
-          <input id="manager_ref" className={fieldClass} value={form.manager_ref} onChange={set('manager_ref')} required />
-        </div>
-
-        <div>
-          <label className={labelClass} htmlFor="encadrant_ref">Matricule de l'Encadrant</label>
-          <input id="encadrant_ref" className={fieldClass} value={form.encadrant_ref} onChange={set('encadrant_ref')} />
-        </div>
-
-        <div>
           <label className={labelClass} htmlFor="start_date">Date de Début *</label>
           <input id="start_date" type="date" className={fieldClass} value={form.start_date} onChange={set('start_date')} required />
         </div>
 
-        <div>
-          <label className={labelClass} htmlFor="contract_end_date">Date Fin de Contrat</label>
-          <input id="contract_end_date" type="date" className={fieldClass} value={form.contract_end_date} onChange={set('contract_end_date')} />
-        </div>
+        {(form.journey_type === 'renewal' || form.journey_type === 'offboarding') && (
+          <div>
+            <label className={labelClass} htmlFor="contract_end_date">Date Fin de Contrat</label>
+            <input id="contract_end_date" type="date" className={fieldClass} value={form.contract_end_date} onChange={set('contract_end_date')} />
+          </div>
+        )}
 
         <div className="sm:col-span-2">
           <button
