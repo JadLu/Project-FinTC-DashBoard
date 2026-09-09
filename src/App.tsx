@@ -167,11 +167,11 @@ export default function App() {
     )
   }
 
-  // Render unauthenticated intake form at /apply
+  // Render unauthenticated intake form at /apply (clean, no header)
   if (page === '/apply') {
     return (
       <>
-        <Intake />
+        <Intake showHeader={false} />
         {toast && <Toast message={toast} onClose={() => setToast('')} />}
       </>
     )
