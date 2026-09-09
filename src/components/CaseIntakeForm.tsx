@@ -125,7 +125,7 @@ export default function CaseIntakeForm() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--nav-top)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--nav-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading && <Loader2 size={15} className="animate-spin" />}
             {loading ? 'Création…' : 'Créer le dossier'}
