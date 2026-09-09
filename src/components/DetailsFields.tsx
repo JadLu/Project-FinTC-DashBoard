@@ -11,10 +11,10 @@ interface DetailsFieldsProps {
 }
 
 const fieldClass =
-  'h-9 w-full rounded-md border border-[#dce4e2] bg-white px-2.5 text-[13px] text-[#253536] outline-none transition focus:border-[#f26522] focus:ring-2 focus:ring-[#f26522]/25'
+  'h-9 w-full rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 text-[13px] text-[var(--text)] outline-none transition focus:border-[#f26522] focus:ring-2 focus:ring-[#f26522]/25'
 const areaClass =
-  'min-h-[64px] w-full rounded-md border border-[#dce4e2] bg-white px-2.5 py-1.5 text-[13px] text-[#253536] outline-none transition focus:border-[#f26522] focus:ring-2 focus:ring-[#f26522]/25'
-const labelClass = 'mb-1 block text-[10px] font-bold uppercase tracking-wide text-[#6d8381]'
+  'min-h-[64px] w-full rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 py-1.5 text-[13px] text-[var(--text)] outline-none transition focus:border-[#f26522] focus:ring-2 focus:ring-[#f26522]/25'
+const labelClass = 'mb-1 block text-[10px] font-bold uppercase tracking-wide text-[var(--text-3)]'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : v == null ? '' : String(v))
 const num = (v: unknown) => (typeof v === 'number' && !Number.isNaN(v) ? String(v) : '')
@@ -75,7 +75,7 @@ export default function DetailsFields({ ownerRole, journeyType, value, onChange 
     </div>
   )
   const checkField = (k: string, label: string) => (
-    <label key={k} className="flex items-center gap-2 text-[13px] text-[#253536]">
+    <label key={k} className="flex items-center gap-2 text-[13px] text-[var(--text)]">
       <input type="checkbox" checked={value[k] === true} onChange={e => set(k, e.target.checked || undefined)} />
       {label}
     </label>
@@ -85,7 +85,7 @@ export default function DetailsFields({ ownerRole, journeyType, value, onChange 
       <label className={labelClass}>{label}</label>
       <div className="flex flex-wrap gap-x-4 gap-y-1.5">
         {options.map(o => (
-          <label key={o} className="flex items-center gap-1.5 text-[13px] text-[#253536]">
+          <label key={o} className="flex items-center gap-1.5 text-[13px] text-[var(--text)]">
             <input type="checkbox" checked={arr(value[k]).includes(o)} onChange={() => toggleInGroup(k, o)} />
             {o}
           </label>
@@ -156,8 +156,8 @@ export function DetailsList({ details }: { details: Record<string, unknown> | nu
     <dl className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px]">
       {entries.map(([k, v]) => (
         <div key={k} className="contents">
-          <dt className="font-semibold text-[#6d8381]">{k}</dt>
-          <dd className="text-[#4c5a59]">{Array.isArray(v) ? v.join(', ') : String(v)}</dd>
+          <dt className="font-semibold text-[var(--text-3)]">{k}</dt>
+          <dd className="text-[var(--text-2)]">{Array.isArray(v) ? v.join(', ') : String(v)}</dd>
         </div>
       ))}
     </dl>

@@ -20,8 +20,8 @@ const EMPTY = {
 }
 
 const fieldClass =
-  'h-10 w-full rounded-lg border border-[#dce4e2] bg-white px-3 text-sm text-[#253536] outline-none transition focus:border-[#f26522] focus:ring-2 focus:ring-[#f26522]/30'
-const labelClass = 'mb-1.5 block text-[11px] font-bold uppercase tracking-wide text-[#6d8381]'
+  'h-10 w-full rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-sm text-[var(--text)] outline-none transition focus:border-[#f26522] focus:ring-2 focus:ring-[#f26522]/30'
+const labelClass = 'mb-1.5 block text-[11px] font-bold uppercase tracking-wide text-[var(--text-3)]'
 
 export default function CaseIntakeForm() {
   const { submit, loading, error } = useCreateCase()
@@ -57,28 +57,28 @@ export default function CaseIntakeForm() {
   }
 
   return (
-    <div className="rounded-[9px] border border-[#e6ebea] bg-white p-6 sm:p-8">
+    <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
       <div className="mb-6">
-        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[1.1px] text-[#6d8381]">
+        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[1.1px] text-[var(--text-3)]">
           Onboarding
         </p>
-        <h2 className="font-['Space_Grotesk'] text-xl font-semibold tracking-tight text-[#192b2c]">
+        <h2 className="font-['Space_Grotesk'] text-xl font-semibold tracking-tight text-[var(--text)]">
           Nouveau dossier stagiaire
         </h2>
-        <p className="mt-1.5 text-[13px] text-[#899695]">
+        <p className="mt-1.5 text-[13px] text-[var(--text-2)]">
           Renseignez les informations ci-dessous. Le dossier est créé automatiquement dans Fusion.
         </p>
       </div>
 
       {success && (
-        <div className="mb-5 flex items-center gap-2 rounded-lg border border-[#bfe6d1] bg-[#e3f4eb] px-4 py-3 text-sm font-medium text-[#2f7458]">
+        <div className="mb-5 flex items-center gap-2 rounded-lg border border-[var(--green-bg)] bg-[var(--green-bg)] px-4 py-3 text-sm font-medium text-[var(--green-fg)]">
           <Check size={16} />
           {success}
         </div>
       )}
 
       {error && (
-        <div className="mb-5 flex items-center gap-2 rounded-lg border border-[#f0cdc6] bg-[#fbe9e5] px-4 py-3 text-sm font-medium text-[#b0574a]">
+        <div className="mb-5 flex items-center gap-2 rounded-lg border border-[var(--red-bg)] bg-[var(--red-bg)] px-4 py-3 text-sm font-medium text-[var(--red-fg)]">
           <CircleAlert size={16} />
           {error}
         </div>
@@ -125,7 +125,7 @@ export default function CaseIntakeForm() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#14223f] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#24406a] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--nav-top)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--nav-hover)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading && <Loader2 size={15} className="animate-spin" />}
             {loading ? 'Création…' : 'Créer le dossier'}

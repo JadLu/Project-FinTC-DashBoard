@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { hasSupabaseConfig, supabase } from './supabase'
 import { demoCases, demoConflicts, demoEvents, demoPeople, demoSteps } from './data'
 import type { Case, Conflict, Event, Person, Step } from './types'
@@ -92,4 +92,50 @@ export function useManagerTasks(personId: number | undefined) {
   }, [refetch])
 
   return { cases, steps, loading, refetch }
+}
+
+/**
+ * Keeps the dashboard in sync when another actor changes the data:
+ *  - Supabase Realtime on the workflow tables (instant; needs the tables added to
+ *    the `supabase_realtime` publication in the Supabase dashboard)
+ *  - a slow interval + refetch-on-focus as a fallback when Realtime is not enabled
+ * `refetch` must be stable (wrap it in useCallback).
+ */
+export function useAutoSync(refetch: () => void | Promise<unknown>, intervalMs = 20000) {
+  const refetchRef = useRef(refetch)
+  refetchRef.current = refetch
+
+  useEffect(() => {
+    if (!hasSupabaseConfig) return
+    const run = () => { void refetchRef.current() }
+
+    let debounce: ReturnType<typeof setTimeout> | undefined
+    const debounced = () => {
+      clearTimeout(debounce)
+      debounce = setTimeout(run, 400)
+    }
+
+    const channel = supabase
+      .channel('hr-workflow-sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'hr_steps' }, debounced)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'hr_cases' }, debounced)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'hr_events' }, debounced)
+      .subscribe()
+
+    const onVisible = () => { if (document.visibilityState === 'visible') run() }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', run)
+
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') run()
+    }, intervalMs)
+
+    return () => {
+      clearTimeout(debounce)
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', run)
+      void supabase.removeChannel(channel)
+    }
+  }, [intervalMs])
 }

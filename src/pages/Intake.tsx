@@ -1,17 +1,16 @@
 // src/pages/Intake.tsx
 import CaseIntakeForm from '../components/CaseIntakeForm'
+import { PageHeader } from '../components/ui'
 
 export default function Intake() {
   return (
     <>
-      <div className="page-intro compact">
-        <div>
-          <p className="eyebrow">Espace stagiaire</p>
-          <h1>Créer un dossier</h1>
-          <p className="subtle">Formulaire d'intake — envoie directement le dossier à Fusion.</p>
-        </div>
-      </div>
-      <div className="mx-auto max-w-[720px]">
+      <PageHeader
+        eyebrow="smartRH · Espace stagiaire"
+        title="Nouveau dossier"
+        subtitle="Formulaire d'intake — envoie directement le dossier à Fusion."
+      />
+      <div className="mx-auto max-w-[760px]">
         <CaseIntakeForm />
       </div>
     </>
