@@ -1,4 +1,4 @@
-import type { Case, Conflict, DecisionOption, Event, Person, Step } from './types'
+import type { Case, Conflict, DecisionOption, Event, Person, RiskAnalysis, Step } from './types'
 
 const today = new Date()
 const date = (offset: number) => new Date(today.getTime() + offset * 86400000).toISOString().slice(0, 10)
@@ -51,3 +51,18 @@ export const demoDecisionOptions: DecisionOption[] = [
   { owner_role: 'moyens_generaux', action: 'block', decision: 'HANDOVER_PENDING', label_fr: 'Restitution incomplète', is_terminal: false, sort_order: 1 },
 ]
 export const demoConflicts: Conflict[] = [{ id: 1, case_id: 'CASE-REN-002', description: 'Dates contractuelles incohérentes avec le dossier de paie.', status: 'OPEN', opened_at: date(-3), resolved_at: null }]
+
+// Mirrors hr_risk_analysis: the report Fusion Phase 4 writes after each RiskAgent run.
+export const demoRiskAnalysis: RiskAnalysis[] = [{
+  id: 1,
+  generated_at: new Date(Date.now() - 3600000).toISOString(),
+  summary: "Trois dossiers restent ouverts. Le renouvellement CASE-REN-002 est bloqué sur le contrôle budgétaire et concentre l'essentiel du risque ; l'offboarding CASE-OFF-004 accumule une restitution IT en retard à quatre jours de la fin de contrat.",
+  kpis: { total_open: 3, high: 2, medium: 1, low: 0, blocked: 1, overdue_steps: 1 },
+  prioritized: [
+    { case_id: 'CASE-REN-002', risk_level: 'HIGH', reasons: ['Étape « Contrôle budget renouvellement » bloquée (manager)', 'Conflit ouvert sur les dates contractuelles', 'Fin de contrat dans 8 jours'], recommended_action: 'Relancer le contrôle de gestion pour le budget prévisionnel et arbitrer le conflit de dates avec la RH.' },
+    { case_id: 'CASE-OFF-004', risk_level: 'HIGH', reasons: ['Restitution matériel IT en retard depuis 1 jour', 'Escalade déjà déclenchée'], recommended_action: 'Escalader au responsable IT : la restitution doit être clôturée avant la fin de contrat.' },
+    { case_id: 'CASE-PRO-STG-001', risk_level: 'MEDIUM', reasons: ["Évaluation manager due dans 2 jours", 'Feedback équipe non encore collecté'], recommended_action: "Rappeler à Sophie Martin de finaliser l'évaluation avant l'échéance." },
+  ],
+  model: 'gpt-4o-mini',
+  case_count: 3,
+}]

@@ -9,5 +9,10 @@ export interface Step { id: number; case_id: string; step_name: string; owner_pe
 export interface Event { id: number; case_id: string; step_id: number | null; event_type: string; actor: string; note: string | null; created_at: string; decision?: string | null; details?: Record<string, unknown> | null }
 export interface Conflict { id: number; case_id: string; description: string; status: 'OPEN' | 'RESOLVED'; opened_at: string; resolved_at: string | null }
 
+/** Phase 4 (Fusion RiskAgent) writes these three shapes into hr_risk_analysis. */
+export interface RiskKpis { total_open: number; high: number; medium: number; low: number; blocked: number; overdue_steps: number }
+export interface PrioritizedCase { case_id: string; risk_level: RiskLevel; reasons: string[]; recommended_action: string }
+export interface RiskAnalysis { id: number; generated_at: string; summary: string | null; kpis: RiskKpis | null; prioritized: PrioritizedCase[] | null; model: string | null; case_count: number | null }
+
 export type DecisionAction = 'validate' | 'block'
 export interface DecisionOption { owner_role: string; action: DecisionAction; decision: string; label_fr: string; is_terminal: boolean; sort_order: number }

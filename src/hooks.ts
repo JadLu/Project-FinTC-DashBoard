@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { hasSupabaseConfig, supabase } from './supabase'
-import { demoCases, demoConflicts, demoEvents, demoPeople, demoSteps } from './data'
-import type { Case, Conflict, Event, Person, Step } from './types'
+import { demoCases, demoConflicts, demoEvents, demoPeople, demoRiskAnalysis, demoSteps } from './data'
+import type { Case, Conflict, Event, Person, RiskAnalysis, Step } from './types'
 
 export function useData<T>(table: string, fallback: T[]) {
   const [data, setData] = useState<T[]>(fallback)
@@ -21,6 +21,8 @@ export const useSteps = () => useData<Step>('hr_steps', demoSteps)
 export const useEvents = () => useData<Event>('hr_events', demoEvents)
 export const usePeople = () => useData<Person>('personnes', demoPeople)
 export const useConflicts = () => useData<Conflict>('hr_conflicts', demoConflicts)
+/** Risk reports written by Fusion Phase 4; newest run drives the Analyse IA page. */
+export const useRiskAnalysis = () => useData<RiskAnalysis>('hr_risk_analysis', demoRiskAnalysis)
 
 function applyDemoFallback(
   personId: number | undefined,
@@ -122,6 +124,14 @@ export function useAutoSync(refetch: () => void | Promise<unknown>, intervalMs =
       .on('postgres_changes', { event: '*', schema: 'public', table: 'hr_events' }, debounced)
       .subscribe()
 
+    // Phase 4's report table lives on its own channel: it is optional in the
+    // `supabase_realtime` publication, and a failure here must not take down the
+    // sync for the three tables above. The interval below covers it regardless.
+    const analysisChannel = supabase
+      .channel('hr-risk-analysis-sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'hr_risk_analysis' }, debounced)
+      .subscribe()
+
     const onVisible = () => { if (document.visibilityState === 'visible') run() }
     document.addEventListener('visibilitychange', onVisible)
     window.addEventListener('focus', run)
@@ -136,6 +146,7 @@ export function useAutoSync(refetch: () => void | Promise<unknown>, intervalMs =
       document.removeEventListener('visibilitychange', onVisible)
       window.removeEventListener('focus', run)
       void supabase.removeChannel(channel)
+      void supabase.removeChannel(analysisChannel)
     }
   }, [intervalMs])
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { hasSupabaseConfig } from './supabase'
-import { useAutoSync, useCases, useConflicts, useEvents, useManagerTasks, usePeople, useSteps } from './hooks'
+import { useAutoSync, useCases, useConflicts, useEvents, useManagerTasks, usePeople, useRiskAnalysis, useSteps } from './hooks'
 import { useTheme } from './hooks/useTheme'
 import Sidebar from './components/Sidebar'
 import Topbar from './components/Topbar'
@@ -30,6 +30,7 @@ export default function App() {
   const { data: events, refetch: refetchEvents } = useEvents()
   const { data: people } = usePeople()
   const { data: conflicts } = useConflicts()
+  const { data: riskAnalyses, refetch: refetchRiskAnalysis } = useRiskAnalysis()
 
   const initialSessionRef = readSession()
   const [actor, setActor] = useState(initialSessionRef || DEFAULT_ACTOR)
@@ -90,11 +91,16 @@ export default function App() {
     () => decoratedManagerSteps.filter(step => isUrgent(step.due_date)).length,
     [decoratedManagerSteps],
   )
+  // Phase 4 appends one row per run; the Analyse IA page shows the most recent one.
+  const latestAnalysis = useMemo(
+    () => [...riskAnalyses].sort((a, b) => +new Date(b.generated_at) - +new Date(a.generated_at))[0],
+    [riskAnalyses],
+  )
   const alertCount = useMemo(() => decoratedSteps.filter(step => step.status === 'OVERDUE').length, [decoratedSteps])
 
   const refetchAll = useCallback(
-    () => Promise.all([refetchSteps(), refetchCases(), refetchEvents(), refetchManagerTasks()]),
-    [refetchSteps, refetchCases, refetchEvents, refetchManagerTasks],
+    () => Promise.all([refetchSteps(), refetchCases(), refetchEvents(), refetchManagerTasks(), refetchRiskAnalysis()]),
+    [refetchSteps, refetchCases, refetchEvents, refetchManagerTasks, refetchRiskAnalysis],
   )
   useAutoSync(refetchAll)
 
@@ -135,7 +141,7 @@ export default function App() {
     if (page === '/dossiers') return <Dossiers cases={decoratedCases} steps={decoratedSteps} onOpen={openCase} />
     if (page === '/conflits') return <Conflicts conflicts={conflicts} cases={decoratedCases} onOpen={openCase} />
     if (page === '/documents') return <Documents events={events} cases={decoratedCases} onOpen={openCase} />
-    if (page === '/analyse') return <Analysis events={events} cases={decoratedCases} steps={decoratedSteps} onOpen={openCase} />
+    if (page === '/analyse') return <Analysis events={events} cases={decoratedCases} steps={decoratedSteps} analysis={latestAnalysis} onOpen={openCase} />
     if (page === '/rapports') return <Reports cases={decoratedCases} steps={decoratedSteps} events={events} />
     if (page.startsWith('/parcours')) {
       const journey = (page.split('/')[2] || 'probation') as JourneyType
